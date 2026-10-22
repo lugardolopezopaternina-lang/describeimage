@@ -1,1 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speaking Practice - Picture Description (CEFR Evaluation)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --background: #f1f5f9;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 24px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .badge-counter {
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: var(--text-muted);
+    }
+
+    .image-viewport {
+      width: 100%;
+      height: 400px;
+      background: #090d16;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .image-viewport img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-record {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-record:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-record.recording {
+      background: var(--danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    .btn-nav {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .btn-nav:hover {
+      background: #cbd5e1;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    .status-bar {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 14px;
+      min-height: 1.2rem;
+    }
+
+    .transcription-panel {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 18px;
+      min-height: 80px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .feedback-card {
+      display: none;
+      border-top: 2px solid var(--border);
+      padding-top: 18px;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .score-summary {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge-score {
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+    }
+
+    .badge-cefr {
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    .score-excellent { background: #dcfce7; color: #15803d; }
+    .score-acceptable { background: #fef9c3; color: #854d0e; }
+    .score-low { background: #fee2e2; color: #b91c1c; }
+
+    .rubric-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .rubric-box h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.8rem;
+      padding: 4px 9px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .tag-hit { background: #dcfce7; color: #166534; }
+    .tag-miss { background: #f1f5f9; color: #64748b; border: 1px dashed #cbd5e1; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Speaking Task: Picture Description</h1>
+    <span id="counter" class="badge-counter">Image 1 of 10</span>
+  </header>
+
+  <div class="image-viewport">
+    <img id="display-image" src="" alt="Scene for oral description">
+  </div>
+
+  <div class="controls">
+    <button id="btn-record" class="btn-record">
+      <span id="record-icon">🎤</span> <span id="record-text">Start Recording</span>
+    </button>
+    <button id="btn-prev" class="btn-nav">◀ Previous</button>
+    <button id="btn-next" class="btn-nav">Next ▶</button>
+  </div>
+
+  <div id="status-text" class="status-bar">Click "Start Recording" and describe the image in English.</div>
+
+  <div class="transcription-panel" id="transcript-display">
+    <span style="color: var(--text-muted); font-style: italic;">Your live transcription will appear here...</span>
+  </div>
+
+  <div id="feedback-panel" class="feedback-card">
+    <div class="score-summary">
+      <div id="score-badge" class="badge-score">Score: 0.0 / 10.0</div>
+      <div id="cefr-badge" class="badge-cefr">CEFR Level: --</div>
+    </div>
+
+    <div class="rubric-box">
+      <h3>Visual Elements Evaluated</h3>
+      <div id="keywords-container" class="tag-grid"></div>
+    </div>
+
+    <div class="rubric-box">
+      <h3>CEFR Feedback & Assessment</h3>
+      <p id="assessment-notes" style="font-size: 0.92rem; line-height: 1.5; color: var(--text);"></p>
+    </div>
+
+    <div class="rubric-box">
+      <h3>Target Model Answer (Reference)</h3>
+      <p id="model-answer-text" style="font-size: 0.92rem; line-height: 1.5; color: var(--text);"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const exercises = [
+    {
+      id: 1,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_9197_pixabay.com.jpg",
+      keywords: ["student", "laptop", "park", "grass", "blanket", "study", "sitting", "lying", "smile", "tree", "outside"],
+      modelAnswer: "In the picture, three young students are outdoors on the green grass of a park. A young man and a woman are sitting on a picnic blanket with their laptops, while another young woman is lying down on her stomach looking at a screen. They seem relaxed and focused while studying together."
+    },
+    {
+      id: 2,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_9303_unsplash.com.jpg",
+      keywords: ["athlete", "sport", "drink", "water", "bottle", "sunglasses", "rest", "building", "tired", "workout", "city"],
+      modelAnswer: "In the picture, three athletic friends in sportswear and sunglasses are resting between tall modern buildings after a workout. The woman in the center is drinking water from a white bottle, while another woman holds a sports bottle and the man looks exhausted with his hand on his hip."
+    },
+    {
+      id: 3,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_92146_pixabay.com.jpg",
+      keywords: ["bicycle", "bike", "field", "father", "son", "rice", "straw hat", "hat", "leaf", "umbrella", "hill", "countryside"],
+      modelAnswer: "In the picture, a smiling father wearing a traditional conical straw hat stands beside a vintage green bicycle in a vast green rice field. His young son is sitting on the luggage rack, happily holding a huge green leaf like an umbrella, with lush green hills in the background."
+    },
+    {
+      id: 4,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_92737_unsplash.com.jpg",
+      keywords: ["elderly", "couple", "old", "formal", "suit", "tie", "glasses", "smile", "wedding", "guest", "hair", "watch"],
+      modelAnswer: "In the picture, an elderly couple with glasses is seated attentively at a formal event or wedding ceremony. The man on the left has a grey beard and is wearing a dark suit with a patterned tie, while the woman beside him smiles warmly in an elegant black dress with earrings."
+    },
+    {
+      id: 5,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_92923_unsplash.com.jpeg",
+      keywords: ["terrace", "cafe", "dog", "beer", "drink", "brick", "sitting", "relax", "cap", "table", "chair", "street"],
+      modelAnswer: "In the picture, two men are relaxing outdoors on the terrace of a cafe next to a red brick building. A collie dog is resting peacefully on the pavement in front of them, while the men sit on green chairs near small tables with beer glasses."
+    },
+    {
+      id: 6,
+      imageSrc: "describe images/Captura de pantalla_12-10-2026_93112_unsplash.com.jpg",
+      keywords: ["rooftop", "musician", "guitar", "bass", "back to back", "coat", "leather", "band", "building", "play", "rock"],
+      modelAnswer: "In the picture, two young musicians are standing back-to-back on a modern building rooftop. The man on the right wears a white tank top and plays a black electric guitar, while the bassist on the left wears a long black leather coat and dreadlocks."
+    },
+    {
+      id: 7,
+      imageSrc: "describe images/Captura de pantalla_4-10-2026_1837_www.pexels.com.jpeg",
+      keywords: ["family", "sunset", "sun", "lift", "twin", "baby", "babies", "jump", "yellow dress", "square", "park", "light"],
+      modelAnswer: "In the picture, a family is celebrating outdoors in a public square illuminated by the warm golden light of the sunset. The parents on each side are lifting twin babies into the air, while a cheerful little girl in a bright yellow dress leaps happily in the center."
+    },
+    {
+      id: 8,
+      imageSrc: "describe images/Captura de pantalla_4-10-2026_18126_www.pexels.com.jpg",
+      keywords: ["office", "meeting", "business", "suit", "write", "note", "laptop", "document", "coworker", "table", "plant"],
+      modelAnswer: "In the picture, a team of business professionals is collaborating in a modern office with indoor plants. A senior man in a formal dark suit is reviewing documents while a young man sits writing notes and other coworkers analyze data on laptops around a large wooden table."
+    },
+    {
+      id: 9,
+      imageSrc: "describe images/Captura de pantalla_4-10-2026_18433_www.pexels.com.jpg",
+      keywords: ["medical", "doctor", "student", "lab coat", "white coat", "hallway", "corridor", "backpack", "book", "read", "hospital"],
+      modelAnswer: "In the picture, three young medical students or doctors wearing white lab coats and backpacks are standing in a bright hospital hallway. Two men and one woman are discussing case studies together while looking at an open medical book."
+    },
+    {
+      id: 10,
+      imageSrc: "describe images/Captura de pantalla_4-10-2026_18524_www.pexels.com.jpg",
+      keywords: ["beach", "family", "walk", "barefoot", "hold hands", "behind", "float", "basket", "sand", "sea", "sunny"],
+      modelAnswer: "In the picture, a family of five is walking barefoot across a sunny sandy beach toward the ocean, holding hands with their backs to the camera. They are carrying beach accessories including a bright pink swim float and a wicker picnic basket against a rocky background."
+    }
+  ];
+
+  let currentIndex = 0;
+  let recognition = null;
+  let isRecording = false;
+  let fullTranscript = "";
+
+  const imgEl = document.getElementById("display-image");
+  const counterEl = document.getElementById("counter");
+  const btnRecord = document.getElementById("btn-record");
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+  const recordText = document.getElementById("record-text");
+  const statusEl = document.getElementById("status-text");
+  const transcriptEl = document.getElementById("transcript-display");
+  const feedbackPanel = document.getElementById("feedback-panel");
+  const scoreBadge = document.getElementById("score-badge");
+  const cefrBadge = document.getElementById("cefr-badge");
+  const keywordsContainer = document.getElementById("keywords-container");
+  const assessmentNotes = document.getElementById("assessment-notes");
+  const modelAnswerEl = document.getElementById("model-answer-text");
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event) => {
+      let interim = "";
+      fullTranscript = "";
+
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          fullTranscript += event.results[i][0].transcript + " ";
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      transcriptEl.textContent = (fullTranscript + interim).trim() || "Listening...";
+    };
+
+    recognition.onerror = (event) => {
+      statusEl.textContent = "Microphone error: " + event.error;
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      if (isRecording) {
+        stopRecording();
+      }
+    };
+  } else {
+    btnRecord.disabled = true;
+    statusEl.textContent = "Web Speech API is not supported in this browser. Please use Chrome or Edge.";
+  }
+
+  function loadExercise(index) {
+    const ex = exercises[index];
+    imgEl.src = ex.imageSrc;
+    counterEl.textContent = `Image ${index + 1} of ${exercises.length}`;
+    transcriptEl.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">Your live transcription will appear here...</span>';
+    feedbackPanel.style.display = "none";
+    statusEl.textContent = 'Click "Start Recording" and describe the image in English.';
+    fullTranscript = "";
+  }
+
+  function startRecording() {
+    if (!recognition) return;
+    try {
+      fullTranscript = "";
+      transcriptEl.textContent = "Listening... Start speaking in English.";
+      feedbackPanel.style.display = "none";
+      recognition.start();
+      isRecording = true;
+      btnRecord.classList.add("recording");
+      recordText.textContent = "Finish & Evaluate";
+      statusEl.textContent = "Recording in progress... Click Finish when done.";
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function stopRecording() {
+    if (!recognition || !isRecording) return;
+    recognition.stop();
+    isRecording = false;
+    btnRecord.classList.remove("recording");
+    recordText.textContent = "Start Recording";
+    statusEl.textContent = "Analyzing speech and evaluating CEFR criteria...";
+    evaluateSpeech();
+  }
+
+  btnRecord.addEventListener("click", () => {
+    if (!isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  });
+
+  btnPrev.addEventListener("click", () => {
+    if (isRecording) stopRecording();
+    currentIndex = (currentIndex - 1 + exercises.length) % exercises.length;
+    loadExercise(currentIndex);
+  });
+
+  btnNext.addEventListener("click", () => {
+    if (isRecording) stopRecording();
+    currentIndex = (currentIndex + 1) % exercises.length;
+    loadExercise(currentIndex);
+  });
+
+  function evaluateSpeech() {
+    const ex = exercises[currentIndex];
+    const text = fullTranscript.toLowerCase();
+    const words = text.split(/\s+/).filter(w => w.length > 0);
+    const wordCount = words.length;
+
+    if (wordCount < 6) {
+      statusEl.textContent = "Description too short to evaluate. Please try speaking for at least 30 seconds.";
+      return;
+    }
+
+    let hits = [];
+    let misses = [];
+
+    ex.keywords.forEach(kw => {
+      if (text.includes(kw.toLowerCase())) {
+        hits.push(kw);
+      } else {
+        misses.push(kw);
+      }
+    });
+
+    const lengthScore = Math.min(3.0, (wordCount / 50) * 3.0);
+    const vocabScore = Math.min(7.0, (hits.length / Math.min(ex.keywords.length, 6)) * 7.0);
+    const finalScore = Math.min(10.0, Math.round((lengthScore + vocabScore) * 10) / 10);
+
+    let cefrLevel = "";
+    let notes = "";
+
+    if (finalScore >= 8.5 && wordCount >= 55) {
+      cefrLevel = "B2 (Vantage)";
+      notes = "Excellent performance. Wide range of descriptive vocabulary, clear structural cohesion, and accurate spatial context.";
+    } else if (finalScore >= 6.5 && wordCount >= 35) {
+      cefrLevel = "B1 (Threshold)";
+      notes = "Solid performance. Communicates main actions and recognizable elements clearly using continuous tenses and cohesive devices.";
+    } else if (finalScore >= 4.5 && wordCount >= 20) {
+      cefrLevel = "A2 (Waystage)";
+      notes = "Acceptable basic performance. Identifies main subjects and places using simple isolated sentences. Work on connecting ideas with 'while' or 'in the background'.";
+    } else {
+      cefrLevel = "A1 (Breakthrough)";
+      notes = "Basic vocabulary produced. Speech relies on isolated words or fragmented lists. Focus on full sentences using 'There is / There are' and 'They are wearing...'.";
+    }
+
+    feedbackPanel.style.display = "flex";
+    scoreBadge.textContent = `Score: ${finalScore.toFixed(1)} / 10.0`;
+    cefrBadge.textContent = `CEFR: ${cefrLevel}`;
+
+    scoreBadge.className = "badge-score " + 
+      (finalScore >= 8.0 ? "score-excellent" : (finalScore >= 5.5 ? "score-acceptable" : "score-low"));
+
+    keywordsContainer.innerHTML = "";
+    hits.forEach(kw => {
+      const tag = document.createElement("span");
+      tag.className = "tag tag-hit";
+      tag.textContent = `✓ ${kw}`;
+      keywordsContainer.appendChild(tag);
+    });
+
+    misses.forEach(kw => {
+      const tag = document.createElement("span");
+      tag.className = "tag tag-miss";
+      tag.textContent = `✗ ${kw}`;
+      keywordsContainer.appendChild(tag);
+    });
+
+    assessmentNotes.textContent = notes;
+    modelAnswerEl.textContent = ex.modelAnswer;
+    statusEl.textContent = "Evaluation complete. Review your CEFR feedback below.";
+  }
+
+  loadExercise(currentIndex);
+</script>
+
+</body>
+</html>
