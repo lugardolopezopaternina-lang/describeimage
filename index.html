@@ -224,7 +224,7 @@
 <div class="container">
   <header>
     <h1>Speaking Task: Picture Description</h1>
-    <span id="counter" class="badge-counter">Image 1 of 10</span>
+    <span id="counter" class="badge-counter">Image 1 of 9</span>
   </header>
 
   <div class="image-viewport">
@@ -270,23 +270,250 @@
 
 <script>
   // ==========================================================
-  // CONFIGURACIÓN DE EJERCICIOS CON RÚBRICAS MCER
-  // (Rutas sueltas en la raíz del repositorio)
+  // CONFIGURACIÓN EXACTA CON LOS ARCHIVOS DE TU REPOSITORIO
   // ==========================================================
   const exercises = [
     {
       id: 1,
-      imageSrc: "Captura de pantalla_12-10-2026_9197_pixabay.com.jpg",
-      keywords: ["student", "laptop", "park", "grass", "blanket", "study", "sitting", "lying", "smile", "tree", "outside"],
-      modelAnswer: "In the picture, three young students are outdoors on the green grass of a park. A young man and a woman are sitting on a picnic blanket with their laptops, while another young woman is lying down on her stomach looking at a screen. They seem relaxed and focused while studying together."
+      imageSrc: "Captura de pantalla_12-10-2026_92146_pixabay.com.jpg",
+      keywords: ["bicycle", "bike", "field", "father", "son", "rice", "straw hat", "hat", "leaf", "umbrella", "hill", "countryside"],
+      modelAnswer: "In the picture, a smiling father wearing a traditional conical straw hat stands beside a vintage green bicycle in a vast green rice field. His young son is sitting on the luggage rack, happily holding a huge green leaf like an umbrella, with lush green hills in the background."
     },
     {
       id: 2,
-      imageSrc: "Captura de pantalla_12-10-2026_9303_unsplash.com.jpg",
+      imageSrc: "Captura de pantalla_12-10-2026_92737_unsplash.com.jpg",
+      keywords: ["elderly", "couple", "old", "formal", "suit", "tie", "glasses", "smile", "wedding", "guest", "hair", "watch"],
+      modelAnswer: "In the picture, an elderly couple with glasses is seated attentively at a formal event or wedding ceremony. The man on the left has a grey beard and is wearing a dark suit with a patterned tie, while the woman beside him smiles warmly in an elegant black dress with earrings."
+    },
+    {
+      id: 3,
+      imageSrc: "Captura de pantalla_12-10-2026_92923_unsplash.com.jpeg",
+      keywords: ["terrace", "cafe", "dog", "beer", "drink", "brick", "sitting", "relax", "cap", "table", "chair", "street"],
+      modelAnswer: "In the picture, two men are relaxing outdoors on the terrace of a cafe next to a red brick building. A collie dog is resting peacefully on the pavement in front of them, while the men sit on green chairs near small tables with beer glasses."
+    },
+    {
+      id: 4,
+      imageSrc: "Captura de pantalla 12-10-2026 9303 unsplash.com.jpg",
       keywords: ["athlete", "sport", "drink", "water", "bottle", "sunglasses", "rest", "building", "tired", "workout", "city"],
       modelAnswer: "In the picture, three athletic friends in sportswear and sunglasses are resting between tall modern buildings after a workout. The woman in the center is drinking water from a white bottle, while another woman holds a sports bottle and the man looks exhausted with his hand on his hip."
     },
     {
-      id: 3,
-      imageSrc: "Captura de pantalla_12-10-2026_92146_pixabay.com.jpg",
-      keywords: ["bicycle", "bike", "field", "father", "son", "rice", "straw hat", "hat", "leaf", "umbrella", "hill", "countryside"],
+      id: 5,
+      imageSrc: "Captura de pantalla_12-10-2026_93112_unsplash.com.jpg",
+      keywords: ["rooftop", "musician", "guitar", "bass", "back to back", "coat", "leather", "band", "building", "play", "rock"],
+      modelAnswer: "In the picture, two young musicians are standing back-to-back on a modern building rooftop. The man on the right wears a white tank top and plays a black electric guitar, while the bassist on the left wears a long black leather coat and dreadlocks."
+    },
+    {
+      id: 6,
+      imageSrc: "Captura de pantalla_4-10-2026_18126_www.pexels.com.jpg",
+      keywords: ["office", "meeting", "business", "suit", "write", "note", "laptop", "document", "coworker", "table", "plant"],
+      modelAnswer: "In the picture, a team of business professionals is collaborating in a modern office with indoor plants. A senior man in a formal dark suit is reviewing documents while a young man sits writing notes and other coworkers analyze data on laptops around a large wooden table."
+    },
+    {
+      id: 7,
+      imageSrc: "Captura de pantalla_4-10-2026_1837_www.pexels.com.jpeg",
+      keywords: ["family", "sunset", "sun", "lift", "twin", "baby", "babies", "jump", "yellow dress", "square", "park", "light"],
+      modelAnswer: "In the picture, a family is celebrating outdoors in a public square illuminated by the warm golden light of the sunset. The parents on each side are lifting twin babies into the air, while a cheerful little girl in a bright yellow dress leaps happily in the center."
+    },
+    {
+      id: 8,
+      imageSrc: "Captura de pantalla_4-10-2026_18433_www.pexels.com.jpg",
+      keywords: ["medical", "doctor", "student", "lab coat", "white coat", "hallway", "corridor", "backpack", "book", "read", "hospital"],
+      modelAnswer: "In the picture, three young medical students or doctors wearing white lab coats and backpacks are standing in a bright hospital hallway. Two men and one woman are discussing case studies together while looking at an open medical book."
+    },
+    {
+      id: 9,
+      imageSrc: "Captura de pantalla 4-10-2026 18524 www.pexels.com.jpg",
+      keywords: ["beach", "family", "walk", "barefoot", "hold hands", "behind", "float", "basket", "sand", "sea", "sunny"],
+      modelAnswer: "In the picture, a family of five is walking barefoot across a sunny sandy beach toward the ocean, holding hands with their backs to the camera. They are carrying beach accessories including a bright pink swim float and a wicker picnic basket against a rocky background."
+    }
+  ];
+
+  let currentIndex = 0;
+  let recognition = null;
+  let isRecording = false;
+  let fullTranscript = "";
+
+  const imgEl = document.getElementById("display-image");
+  const counterEl = document.getElementById("counter");
+  const btnRecord = document.getElementById("btn-record");
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+  const recordText = document.getElementById("record-text");
+  const statusEl = document.getElementById("status-text");
+  const transcriptEl = document.getElementById("transcript-display");
+  const feedbackPanel = document.getElementById("feedback-panel");
+  const scoreBadge = document.getElementById("score-badge");
+  const cefrBadge = document.getElementById("cefr-badge");
+  const keywordsContainer = document.getElementById("keywords-container");
+  const assessmentNotes = document.getElementById("assessment-notes");
+  const modelAnswerEl = document.getElementById("model-answer-text");
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event) => {
+      let interim = "";
+      fullTranscript = "";
+
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          fullTranscript += event.results[i][0].transcript + " ";
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      transcriptEl.textContent = (fullTranscript + interim).trim() || "Listening...";
+    };
+
+    recognition.onerror = (event) => {
+      statusEl.textContent = "Microphone error: " + event.error;
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      if (isRecording) {
+        stopRecording();
+      }
+    };
+  } else {
+    btnRecord.disabled = true;
+    statusEl.textContent = "Web Speech API is not supported in this browser. Please use Chrome or Edge.";
+  }
+
+  function loadExercise(index) {
+    const ex = exercises[index];
+    imgEl.src = encodeURI(ex.imageSrc);
+    counterEl.textContent = `Image ${index + 1} of ${exercises.length}`;
+    transcriptEl.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">Your live transcription will appear here...</span>';
+    feedbackPanel.style.display = "none";
+    statusEl.textContent = 'Click "Start Recording" and describe the image in English.';
+    fullTranscript = "";
+  }
+
+  function startRecording() {
+    if (!recognition) return;
+    try {
+      fullTranscript = "";
+      transcriptEl.textContent = "Listening... Start speaking in English.";
+      feedbackPanel.style.display = "none";
+      recognition.start();
+      isRecording = true;
+      btnRecord.classList.add("recording");
+      recordText.textContent = "Finish & Evaluate";
+      statusEl.textContent = "Recording in progress... Click Finish when done.";
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function stopRecording() {
+    if (!recognition || !isRecording) return;
+    recognition.stop();
+    isRecording = false;
+    btnRecord.classList.remove("recording");
+    recordText.textContent = "Start Recording";
+    statusEl.textContent = "Analyzing speech and evaluating CEFR criteria...";
+    evaluateSpeech();
+  }
+
+  btnRecord.addEventListener("click", () => {
+    if (!isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  });
+
+  btnPrev.addEventListener("click", () => {
+    if (isRecording) stopRecording();
+    currentIndex = (currentIndex - 1 + exercises.length) % exercises.length;
+    loadExercise(currentIndex);
+  });
+
+  btnNext.addEventListener("click", () => {
+    if (isRecording) stopRecording();
+    currentIndex = (currentIndex + 1) % exercises.length;
+    loadExercise(currentIndex);
+  });
+
+  function evaluateSpeech() {
+    const ex = exercises[currentIndex];
+    const text = fullTranscript.toLowerCase();
+    const words = text.split(/\s+/).filter(w => w.length > 0);
+    const wordCount = words.length;
+
+    if (wordCount < 6) {
+      statusEl.textContent = "Description too short to evaluate. Please try speaking for at least 30 seconds.";
+      return;
+    }
+
+    let hits = [];
+    let misses = [];
+
+    ex.keywords.forEach(kw => {
+      if (text.includes(kw.toLowerCase())) {
+        hits.push(kw);
+      } else {
+        misses.push(kw);
+      }
+    });
+
+    const lengthScore = Math.min(3.0, (wordCount / 50) * 3.0);
+    const vocabScore = Math.min(7.0, (hits.length / Math.min(ex.keywords.length, 6)) * 7.0);
+    const finalScore = Math.min(10.0, Math.round((lengthScore + vocabScore) * 10) / 10);
+
+    let cefrLevel = "";
+    let notes = "";
+
+    if (finalScore >= 8.5 && wordCount >= 55) {
+      cefrLevel = "B2 (Vantage)";
+      notes = "Excellent performance. Wide range of descriptive vocabulary, clear structural cohesion, and accurate spatial context.";
+    } else if (finalScore >= 6.5 && wordCount >= 35) {
+      cefrLevel = "B1 (Threshold)";
+      notes = "Solid performance. Communicates main actions and recognizable elements clearly using continuous tenses and cohesive devices.";
+    } else if (finalScore >= 4.5 && wordCount >= 20) {
+      cefrLevel = "A2 (Waystage)";
+      notes = "Acceptable basic performance. Identifies main subjects and places using simple isolated sentences. Work on connecting ideas with 'while' or 'in the background'.";
+    } else {
+      cefrLevel = "A1 (Breakthrough)";
+      notes = "Basic vocabulary produced. Speech relies on isolated words or fragmented lists. Focus on full sentences using 'There is / There are' and 'They are wearing...'.";
+    }
+
+    feedbackPanel.style.display = "flex";
+    scoreBadge.textContent = `Score: ${finalScore.toFixed(1)} / 10.0`;
+    cefrBadge.textContent = `CEFR: ${cefrLevel}`;
+
+    scoreBadge.className = "badge-score " + 
+      (finalScore >= 8.0 ? "score-excellent" : (finalScore >= 5.5 ? "score-acceptable" : "score-low"));
+
+    keywordsContainer.innerHTML = "";
+    hits.forEach(kw => {
+      const tag = document.createElement("span");
+      tag.className = "tag tag-hit";
+      tag.textContent = `✓ ${kw}`;
+      keywordsContainer.appendChild(tag);
+    });
+
+    misses.forEach(kw => {
+      const tag = document.createElement("span");
+      tag.className = "tag tag-miss";
+      tag.textContent = `✗ ${kw}`;
+      keywordsContainer.appendChild(tag);
+    });
+
+    assessmentNotes.textContent = notes;
+    modelAnswerEl.textContent = ex.modelAnswer;
+    statusEl.textContent = "Evaluation complete. Review your CEFR feedback below.";
+  }
+
+  loadExercise(currentIndex);
+</script>
+
+</body>
+</html>
