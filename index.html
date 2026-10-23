@@ -269,67 +269,68 @@
 </div>
 
 <script>
-  // ==========================================================
-  // CONFIGURACIÓN EXACTA CON EXTENSIONES .JPEG Y NOMBRES REALES
-  // ==========================================================
+  // Enlaces directos crudos desde tu propio repositorio de GitHub (Infalible)
+  const BASE_URL = "https://github.com/lugardolopezopaternina-lang/describeimage/blob/main/";
+  const RAW_SUFFIX = "?raw=true";
+
   const exercises = [
     {
       id: 1,
-      imageSrc: "Captura de pantalla_12-10-2026_9197_pixabay.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_12-10-2026_9197_pixabay.com.jpeg",
       keywords: ["student", "laptop", "park", "grass", "blanket", "study", "sitting", "lying", "smile", "tree", "outside"],
       modelAnswer: "In the picture, three young students are outdoors on the green grass of a park. A young man and a woman are sitting on a picnic blanket with their laptops, while another young woman is lying down on her stomach looking at a screen. They seem relaxed and focused while studying together."
     },
     {
       id: 2,
-      imageSrc: "Captura de pantalla_12-10-2026_92146_pixabay.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_12-10-2026_92146_pixabay.com.jpeg",
       keywords: ["bicycle", "bike", "field", "father", "son", "rice", "straw hat", "hat", "leaf", "umbrella", "hill", "countryside"],
       modelAnswer: "In the picture, a smiling father wearing a traditional conical straw hat stands beside a vintage green bicycle in a vast green rice field. His young son is sitting on the luggage rack, happily holding a huge green leaf like an umbrella, with lush green hills in the background."
     },
     {
       id: 3,
-      imageSrc: "Captura de pantalla_12-10-2026_92737_unsplash.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_12-10-2026_92737_unsplash.com.jpeg",
       keywords: ["elderly", "couple", "old", "formal", "suit", "tie", "glasses", "smile", "wedding", "guest", "hair", "watch"],
       modelAnswer: "In the picture, an elderly couple with glasses is seated attentively at a formal event or wedding ceremony. The man on the left has a grey beard and is wearing a dark suit with a patterned tie, while the woman beside him smiles warmly in an elegant black dress with earrings."
     },
     {
       id: 4,
-      imageSrc: "Captura de pantalla_12-10-2026_92923_unsplash.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_12-10-2026_92923_unsplash.com.jpeg",
       keywords: ["terrace", "cafe", "dog", "beer", "drink", "brick", "sitting", "relax", "cap", "table", "chair", "street"],
       modelAnswer: "In the picture, two men are relaxing outdoors on the terrace of a cafe next to a red brick building. A collie dog is resting peacefully on the pavement in front of them, while the men sit on green chairs near small tables with beer glasses."
     },
     {
       id: 5,
-      imageSrc: "Captura de pantalla 12-10-2026 9303 unsplash.com.jpeg",
+      imageFile: "Captura%20de%20pantalla%2012-10-2026%209303%20unsplash.com.jpeg",
       keywords: ["athlete", "sport", "drink", "water", "bottle", "sunglasses", "rest", "building", "tired", "workout", "city"],
       modelAnswer: "In the picture, three athletic friends in sportswear and sunglasses are resting between tall modern buildings after a workout. The woman in the center is drinking water from a white bottle, while another woman holds a sports bottle and the man looks exhausted with his hand on his hip."
     },
     {
       id: 6,
-      imageSrc: "Captura de pantalla_12-10-2026_93112_unsplash.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_12-10-2026_93112_unsplash.com.jpeg",
       keywords: ["rooftop", "musician", "guitar", "bass", "back to back", "coat", "leather", "band", "building", "play", "rock"],
       modelAnswer: "In the picture, two young musicians are standing back-to-back on a modern building rooftop. The man on the right wears a white tank top and plays a black electric guitar, while the bassist on the left wears a long black leather coat and dreadlocks."
     },
     {
       id: 7,
-      imageSrc: "Captura de pantalla_4-10-2026_18126_www.pexels.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_4-10-2026_18126_www.pexels.com.jpeg",
       keywords: ["office", "meeting", "business", "suit", "write", "note", "laptop", "document", "coworker", "table", "plant"],
       modelAnswer: "In the picture, a team of business professionals is collaborating in a modern office with indoor plants. A senior man in a formal dark suit is reviewing documents while a young man sits writing notes and other coworkers analyze data on laptops around a large wooden table."
     },
     {
       id: 8,
-      imageSrc: "Captura de pantalla_4-10-2026_1837_www.pexels.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_4-10-2026_1837_www.pexels.com.jpeg",
       keywords: ["family", "sunset", "sun", "lift", "twin", "baby", "babies", "jump", "yellow dress", "square", "park", "light"],
       modelAnswer: "In the picture, a family is celebrating outdoors in a public square illuminated by the warm golden light of the sunset. The parents on each side are lifting twin babies into the air, while a cheerful little girl in a bright yellow dress leaps happily in the center."
     },
     {
       id: 9,
-      imageSrc: "Captura de pantalla_4-10-2026_18433_www.pexels.com.jpeg",
+      imageFile: "Captura%20de%20pantalla_4-10-2026_18433_www.pexels.com.jpeg",
       keywords: ["medical", "doctor", "student", "lab coat", "white coat", "hallway", "corridor", "backpack", "book", "read", "hospital"],
       modelAnswer: "In the picture, three young medical students or doctors wearing white lab coats and backpacks are standing in a bright hospital hallway. Two men and one woman are discussing case studies together while looking at an open medical book."
     },
     {
       id: 10,
-      imageSrc: "Captura de pantalla 4-10-2026 18524 www.pexels.com.jpeg",
+      imageFile: "Captura%20de%20pantalla%204-10-2026%2018524%20www.pexels.com.jpeg",
       keywords: ["beach", "family", "walk", "barefoot", "hold hands", "behind", "float", "basket", "sand", "sea", "sunny"],
       modelAnswer: "In the picture, a family of five is walking barefoot across a sunny sandy beach toward the ocean, holding hands with their backs to the camera. They are carrying beach accessories including a bright pink swim float and a wicker picnic basket against a rocky background."
     }
@@ -355,13 +356,11 @@
   const assessmentNotes = document.getElementById("assessment-notes");
   const modelAnswerEl = document.getElementById("model-answer-text");
 
-  // Fallback automático: si falla como .jpeg, prueba con .jpg
+  // Si por alguna razón la imagen tiene extensión .jpg en lugar de .jpeg, se prueba automáticamente
   imgEl.onerror = function() {
-    const currentSrc = decodeURI(imgEl.src);
-    if (currentSrc.endsWith(".jpeg")) {
-      imgEl.src = encodeURI(currentSrc.replace(".jpeg", ".jpg"));
-    } else if (currentSrc.endsWith(".jpg")) {
-      imgEl.src = encodeURI(currentSrc.replace(".jpg", ".png"));
+    let src = imgEl.src;
+    if (src.includes(".jpeg")) {
+      imgEl.src = src.replace(".jpeg", ".jpg");
     }
   };
 
@@ -404,7 +403,7 @@
 
   function loadExercise(index) {
     const ex = exercises[index];
-    imgEl.src = encodeURI(ex.imageSrc);
+    imgEl.src = BASE_URL + ex.imageFile + RAW_SUFFIX;
     counterEl.textContent = `Image ${index + 1} of ${exercises.length}`;
     transcriptEl.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">Your live transcription will appear here...</span>';
     feedbackPanel.style.display = "none";
